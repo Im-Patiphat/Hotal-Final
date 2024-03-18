@@ -35,20 +35,27 @@ class Guest extends Person {
   }
   //----------- createBooking => ไม่แน่ใจว่าเสร็จยัง -----------//
 
-  createBooking(reservationNumber, startDate, durationDays, room) {
+  createBooking(reservationNumber, startDate, durationDays,status, room,createdBy) {
     //ตรวจสอบห้องว่าง
-    //const isRoomAvailable =  room.isRoomAvailable(room, startDate, durationDays);
+    const isRoomAvailable =  room.isRoomAvailable(room.getRoomnumber());
 
-    //if (isRoomAvailable()) {
+    if (isRoomAvailable) {
     const booking = new RoomBooking(
       reservationNumber,
       startDate,
       durationDays,
-      room
+      status,
+      room,
+      createdBy
     );
+  
     this.addRoomBooking(booking);
     this.totalRoomBookings++;
+    
     return booking;
+    }else{
+      console.log(room.getRoomnumber()+" is not available ");
+    }
   }
   toString() {
     let inbooking = "";
@@ -60,13 +67,24 @@ class Guest extends Person {
 }
 //----------- Receptionist -----------//
 class Receptionist extends Person {
+  
   constructor(name, address, email, phone, accountType) {
     super(name, address, email, phone, accountType);
   }
+  
   //----------- ยังไม่ได้ทำ -----------//
-  createBooking() {}
+  createBooking(guest,reservationNumber, startDate,status, durationDays, room) {
+    const isRoomAvailable =  room.isRoomAvailable(room.getRoomnumber());
+    if (isRoomAvailable) {
+      const booking = guest.createBooking(reservationNumber, startDate,status, durationDays, room,guest.name);
+      
+      return booking;
+    }else{
+      console.log(room.getRoomnumber()+" is not available ");
+    }
+  }
   toString() {
-    return `${super.toString()}`;
+    return `${super.toString()} `;
   }
 }
 
@@ -106,6 +124,9 @@ class Room {
     this.status = status;
     this.roomPrice = roomPrice;
   }
+  getRoomnumber(){
+    return this.roomNumber;
+  }
   isRoomAvailable(roomNumber) {
     return (
       this.roomNumber === roomNumber && this.status === RoomStatus.AVAILABLE
@@ -129,7 +150,7 @@ class RoomBooking {
   status = null;
   createdBy = null;
   room = null;
-  constructor(reservationNumber,startDate, durationDays,room,status, createdBy) {
+  constructor(reservationNumber,startDate, durationDays,status,room, createdBy) {
     this.reservationNumber = reservationNumber;
     this.startDate = startDate;
     this.durationDays = durationDays;
@@ -137,32 +158,31 @@ class RoomBooking {
     this.createdBy = createdBy;
     this.room = room;
   }
-  setCreatedBy(createdBy){
-  this.createdBy = createdBy; }
+  
   setRoom(room){
     this.rooms = room;
   }
-  getRoom(){
-    return this.room
-  }
+ 
   setStatus(status){
     this.status = status
   }
-  //----------- getDetail => ไม่เสร็จ โค้ดมั่วเอง -----------//
+  
   getDetail(reservationNumber){
-    const roombooking = new RoomBooking();
-    return roombooking;
+    const roomBooking = reservationNumber.createBooking();
+    return roomBooking;
   }
-  //----------- createBooking => ไม่เสร็จ โค้ดมั่วเอง -----------//
+ 
   createBooking(reservationNumber, startDate, durationDays, guest, room) {
     const booking = new RoomBooking(reservationNumber,startDate,durationDays,guest,room);
-    booking.setCreatedBy(guest);
-    booking.setRoom(room);
     return booking != null;
   }
   toString() {
     return `RoomBooking: [BookingNumber: ${this.reservationNumber}, Room : ${this.room} Status: ${this.status}\n\t Check in date ${this.startDate} stay for ${this.durationDays} nights booked by: ${this.createdBy}]`;
   }
+}
+//----------- Notification -----------//
+class Notification {
+
 }
 //------ Enum------
 class AccountType {
@@ -267,15 +287,16 @@ const main = () => {
   hotel.addNewRoom(room3);
   hotel.addNewRoom(room4);
   
-  bob.createBooking("Booking01","11/03/2567",3,room2);
+  bob.createBooking("Booking01","11/03/2567",3,BookingStatus.BOOKED,room2,bob.name);
+  catherine.createBooking(alice,"Booking02","13/03/2567",3,BookingStatus.BOOKED,room4);
 
-  console.log(hotel.toString());
-  console.log(bob.toString());
-  console.log();
-  // console.log(alice.toString());
-  //   console.log(catherine.toString());
-  //   console.log(devid.toString());
   
-  // Oay : ขอให้โชคดี ;)
+
+  // console.log(hotel.toString());
+  console.log(bob.toString());
+  // console.log(alice.toString());
+    //  console.log(catherine.toString());
+  //   console.log(devid.toString());
+  // Oay : 
 };
 main();
