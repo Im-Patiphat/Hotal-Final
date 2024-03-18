@@ -1,3 +1,4 @@
+r
 //----------- Person -----------//
 class Person {
   name = "";
@@ -16,9 +17,7 @@ class Person {
     this.accountType = accountType;
   }
   toString() {
-    return `Person : [Name = ${this.name}, Address = ${this.address}, Email = ${this.email}, Phone = ${this.phone}, AccountType = ${
-      this.accountType
-    }]`;
+    return `Person : [Name = ${this.name}, Address = ${this.address}, Email = ${this.email}, Phone = ${this.phone}, AccountType = ${this.accountType}]`;
   }
 }
 
@@ -29,58 +28,76 @@ class Guest extends Person {
   constructor(name, address, email, phone, accountType) {
     super(name, address, email, phone, accountType);
   }
-  
+
   addRoomBooking(roombooking) {
     this.roombookings.push(roombooking);
   }
   //----------- createBooking => ไม่แน่ใจว่าเสร็จยัง -----------//
 
-  createBooking(reservationNumber, startDate, durationDays,status, room,createdBy) {
+  createBooking(
+    reservationNumber,
+    startDate,
+    durationDays,
+    status,
+    room,
+    createdBy
+  ) {
     //ตรวจสอบห้องว่าง
-    const isRoomAvailable =  room.isRoomAvailable(room.getRoomnumber());
+    const isRoomAvailable = room.isRoomAvailable(room.getRoomnumber());
 
     if (isRoomAvailable) {
-    const booking = new RoomBooking(
-      reservationNumber,
-      startDate,
-      durationDays,
-      status,
-      room,
-      createdBy
-    );
-  
-    this.addRoomBooking(booking);
-    this.totalRoomBookings++;
-    
-    return booking;
-    }else{
-      console.log(room.getRoomnumber()+" is not available ");
+      const booking = new RoomBooking(
+        reservationNumber,
+        startDate,
+        durationDays,
+        status,
+        room,
+        createdBy
+      );
+
+      this.addRoomBooking(booking);
+      this.totalRoomBookings++;
+
+      return booking;
+    } else {
+      console.log(room.getRoomnumber() + " is not available ");
     }
   }
   toString() {
-    let inbooking = "";
-    for (let i = 0; i < this.roombookings.length; i++) {
-      inbooking += this.roombookings[i].toString();
-    }
-    return `${super.toString()} Total Bookings: ${this.totalRoomBookings}\n${inbooking}`;
+    return `${super.toString()} Total Bookings: ${
+      this.totalRoomBookings
+    }\n${inbooking}`;
   }
 }
 //----------- Receptionist -----------//
 class Receptionist extends Person {
-  
   constructor(name, address, email, phone, accountType) {
     super(name, address, email, phone, accountType);
   }
-  
+
   //----------- ยังไม่ได้ทำ -----------//
-  createBooking(guest,reservationNumber, startDate,status, durationDays, room) {
-    const isRoomAvailable =  room.isRoomAvailable(room.getRoomnumber());
+  createBooking(
+    guest,
+    reservationNumber,
+    startDate,
+    status,
+    durationDays,
+    room
+  ) {
+    const isRoomAvailable = room.isRoomAvailable(room.getRoomnumber());
     if (isRoomAvailable) {
-      const booking = guest.createBooking(reservationNumber, startDate,status, durationDays, room,guest.name);
-      
+      const booking = guest.createBooking(
+        reservationNumber,
+        startDate,
+        status,
+        durationDays,
+        room,
+        guest.name
+      );
+
       return booking;
-    }else{
-      console.log(room.getRoomnumber()+" is not available ");
+    } else {
+      console.log(room.getRoomnumber() + " is not available ");
     }
   }
   toString() {
@@ -124,7 +141,7 @@ class Room {
     this.status = status;
     this.roomPrice = roomPrice;
   }
-  getRoomnumber(){
+  getRoomnumber() {
     return this.roomNumber;
   }
   isRoomAvailable(roomNumber) {
@@ -132,7 +149,7 @@ class Room {
       this.roomNumber === roomNumber && this.status === RoomStatus.AVAILABLE
     );
   }
-   //----------- createRoom => ไม่เสร็จ โค้ดมั่วเอง -----------//
+  //----------- createRoom => ไม่เสร็จ โค้ดมั่วเอง -----------//
   createRoom(roomNumber, style, status, price) {
     const room = new Room(roomNumber, style, status, price);
     return room != null;
@@ -150,7 +167,14 @@ class RoomBooking {
   status = null;
   createdBy = null;
   room = null;
-  constructor(reservationNumber,startDate, durationDays,status,room, createdBy) {
+  constructor(
+    reservationNumber,
+    startDate,
+    durationDays,
+    status,
+    room,
+    createdBy
+  ) {
     this.reservationNumber = reservationNumber;
     this.startDate = startDate;
     this.durationDays = durationDays;
@@ -158,22 +182,20 @@ class RoomBooking {
     this.createdBy = createdBy;
     this.room = room;
   }
-  
-  setRoom(room){
-    this.rooms = room;
-  }
- 
-  setStatus(status){
-    this.status = status
-  }
-  
-  getDetail(reservationNumber){
+
+  getDetail(reservationNumber) {
     const roomBooking = reservationNumber.createBooking();
     return roomBooking;
   }
- 
+
   createBooking(reservationNumber, startDate, durationDays, guest, room) {
-    const booking = new RoomBooking(reservationNumber,startDate,durationDays,guest,room);
+    const booking = new RoomBooking(
+      reservationNumber,
+      startDate,
+      durationDays,
+      guest,
+      room
+    );
     return booking != null;
   }
   toString() {
@@ -182,7 +204,23 @@ class RoomBooking {
 }
 //----------- Notification -----------//
 class Notification {
+  roomBooking = null
+  constructor(notification, createOn, content, sender, recipient) {
+    this.notification = notification;
+    this.createOn = createOn;
+    this.content = content;
+    this.sender = sender;
+    this.recipient = recipient;
+  }
 
+  send(sender, content, recipient) {
+    const notification = new Notification(sender, content, recipient);
+    return notification;
+  }
+
+  toString() {
+    return `การแจ้งเตือน: ${this.notification}, สร้างเมื่อ: ${this.createOn}, เนื้อหา: ${this.content}, ผู้ส่ง: ${this.sender}, ผู้รับ: ${this.recipient}`;
+  }
 }
 //------ Enum------
 class AccountType {
@@ -196,10 +234,10 @@ class AccountType {
 class BookingStatus {
   static BOOKED = "booked";
   static NOTBOOKED = "notbooked";
-  constructor(name){
+  constructor(name) {
     this.name = name;
   }
-} 
+}
 
 class RoomStatus {
   static AVAILABLE = "available";
@@ -286,17 +324,31 @@ const main = () => {
   hotel.addNewRoom(room2);
   hotel.addNewRoom(room3);
   hotel.addNewRoom(room4);
-  
-  bob.createBooking("Booking01","11/03/2567",3,BookingStatus.BOOKED,room2,bob.name);
-  catherine.createBooking(alice,"Booking02","13/03/2567",3,BookingStatus.BOOKED,room4);
 
-  
+  bob.createBooking(
+    "Booking01",
+    "11/03/2567",
+    3,
+    BookingStatus.BOOKED,
+    room2,
+    bob.name
+  );
+  catherine.createBooking(
+    alice,
+    "Booking02",
+    "13/03/2567",
+    3,
+    BookingStatus.BOOKED,
+    room4
+  );
+
+    const send1 = new Notification(1,"2024/03/18","Yark Tai Wa",catherine.name,bob.name)
 
   // console.log(hotel.toString());
-  console.log(bob.toString());
+  console.log(send1.toString());
   // console.log(alice.toString());
-    //  console.log(catherine.toString());
+  //  console.log(catherine.toString());
   //   console.log(devid.toString());
-  // Oay : 
+  // Oay :
 };
 main();
